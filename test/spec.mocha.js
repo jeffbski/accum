@@ -2,6 +2,7 @@
 'use strict';
 
 var chai = require('chai-stack');
+var crypto = require('crypto');
 var spec = require('stream-spec');
 var tester = require('stream-tester');
 var accum = require('..'); // require('accum');
@@ -12,10 +13,10 @@ suite('stream-spec');
 
 test('spec random pausing string stream', function (done) {
   var result;
-  var ds = accum(function (err, alldata) {
+  var astream = accum(function (err, alldata) {
     result = alldata;
   });
-  spec(ds)
+  spec(astream)
     .through({strict: false})
     .validateOnExit();
 
@@ -29,7 +30,7 @@ test('spec random pausing string stream', function (done) {
   tester.createRandomStream(gen, 1000) //1k 3char strings
     .pipe(master)
     .pipe(tester.createUnpauseStream())
-    .pipe(ds)
+    .pipe(astream)
     .pipe(tester.createPauseStream())
     .pipe(master.createSlave())
     .on('error', function (err) { done(err); })
@@ -41,33 +42,35 @@ test('spec random pausing string stream', function (done) {
     });
 });
 
-test('spec random pausing string stream', function (done) {
+test('spec random pausing Buffer stream with binary data', function (done) {
   var result;
-  var ds = accum(function (err, alldata) {
+  var astream = accum(function (err, alldata) {
     result = alldata;
   });
-  spec(ds)
+  spec(astream)
     .through({strict: false})
     .validateOnExit();
 
   var master = tester.createConsistentStream();
 
   function gen() {
-    return new Buffer('abc');
+    return new Buffer(crypto.randomBytes(1000));
   }
 
   var manualAccum = [];
-  tester.createRandomStream(gen, 1000) //1k 3char strings
+  tester.createRandomStream(gen, 1000) //1k * 1k binary Buffers
     .pipe(master)
     .pipe(tester.createUnpauseStream())
-    .pipe(ds)
+    .pipe(astream)
     .pipe(tester.createPauseStream())
     .pipe(master.createSlave())
     .on('error', function (err) { done(err); })
     .on('data', function (data) { manualAccum.push(data); })
     .on('end', function () {
-      t.equal(result.length, 3000);
-      t.equal(result, Buffer.concat(manualAccum));
+      t.equal(result.length, 1000 * 1000);
+      var digest = crypto.createHash('sha1').update(result).digest('base64');
+      var expectedDigest = crypto.createHash('sha1').update(Buffer.concat(manualAccum)).digest('base64');
+      t.equal(digest, expectedDigest);
       done();
     });
 });
