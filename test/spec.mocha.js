@@ -144,3 +144,38 @@ test('spec random pausing Buffer stream with binary data - accum.buffer factory'
     });
 });
 
+// accum.string
+
+test('spec random pausing string stream - accum.string factory', function (done) {
+  var result;
+  var astream = accum.string(function (err, alldata) {
+    result = alldata;
+  });
+  spec(astream)
+    .through({strict: false})
+    .validateOnExit();
+
+  var master = tester.createConsistentStream();
+
+  function gen() {
+    return 'abc';
+  }
+
+  var manualAccum = [];
+  tester.createRandomStream(gen, 1000) //1k 3char strings
+    .pipe(master)
+    .pipe(tester.createUnpauseStream())
+    .pipe(astream)
+    .pipe(tester.createPauseStream())
+    .pipe(master.createSlave())
+    .on('error', function (err) { done(err); })
+    .on('data', function (data) { manualAccum.push(new Buffer(data)); })
+    .on('end', function () {
+      t.typeOf(result, 'string');
+      t.equal(result.length, 3000);
+      var digest = crypto.createHash('sha1').update(result).digest('base64');
+      var expectedDigest = crypto.createHash('sha1').update(Buffer.concat(manualAccum).toString()).digest('base64');
+      t.equal(digest, expectedDigest);
+      done();
+    });
+});
