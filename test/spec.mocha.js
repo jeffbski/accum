@@ -13,7 +13,7 @@ suite('stream-spec');
 
 test('spec random pausing string stream - default auto factory', function (done) {
   var result;
-  var astream = accum(function (err, alldata) {
+  var astream = accum(function (alldata) {
     result = alldata;
   });
   spec(astream)
@@ -44,7 +44,7 @@ test('spec random pausing string stream - default auto factory', function (done)
 
 test('spec random pausing Buffer stream with binary data - default auto factory', function (done) {
   var result;
-  var astream = accum(function (err, alldata) {
+  var astream = accum(function (alldata) {
     result = alldata;
   });
   spec(astream)
@@ -80,7 +80,7 @@ test('spec random pausing Buffer stream with binary data - default auto factory'
 
 test('spec random pausing string stream - accum.buffer factory', function (done) {
   var result;
-  var astream = accum.buffer(function (err, alldata) {
+  var astream = accum.buffer(function (alldata) {
     result = alldata;
   });
   spec(astream)
@@ -113,7 +113,7 @@ test('spec random pausing string stream - accum.buffer factory', function (done)
 
 test('spec random pausing Buffer stream with binary data - accum.buffer factory', function (done) {
   var result;
-  var astream = accum.buffer(function (err, alldata) {
+  var astream = accum.buffer(function (alldata) {
     result = alldata;
   });
   spec(astream)
@@ -148,7 +148,7 @@ test('spec random pausing Buffer stream with binary data - accum.buffer factory'
 
 test('spec random pausing string stream - accum.string factory', function (done) {
   var result;
-  var astream = accum.string(function (err, alldata) {
+  var astream = accum.string(function (alldata) {
     result = alldata;
   });
   spec(astream)
@@ -184,7 +184,7 @@ test('spec random pausing string stream - accum.string factory', function (done)
 
 test('spec random pausing Buffer stream with binary data - accum.array factory', function (done) {
   var result;
-  var astream = accum.array(function (err, alldata) {
+  var astream = accum.array(function (alldata) {
     result = alldata;
   });
   spec(astream)

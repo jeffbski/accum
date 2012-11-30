@@ -15,50 +15,60 @@ npm install accum
 
 `accum` provides several factory methods for use:
 
- - The default automatic method - `accum(cb)` constructs a pass-through stream which checks if the first chunk is a Buffer and if so returns a concatenated Buffer of all the data, otherwise if it is a string then returns a concatenated string, otherwise returns a raw array. The `cb` signature is `function(err, alldata)`. The `cb` is called after all the data is received just prior to the `end` event being emitted.
+ - The default automatic method - `accum(listenerFn)` constructs a pass-through stream which checks if the first chunk is a Buffer and if so returns a concatenated Buffer of all the data, otherwise if it is a string then returns a concatenated string, otherwise returns a raw array. The `listenerFn` signature is `function(alldata)`. The `listenerFn` is called after all the data is received just prior to the `end` event being emitted.
 
 ```javascript
 var accum = require('accum');
 rstream
-  .pipe(accum(function (err, alldata) {
-    if (err) return yourHandleErrFn(err); // handle the error
+  .pipe(accum(function (alldata) {
     // use the accumulated data - alldata will be Buffer, string, or []
   }));
 ```
 
 For a more deterministic result use one of the following:
 
- - `accum.buffer(cb)` - constructs a pass-through stream which converts everything into a Buffer, concatenates, and calls the `cb` with the buffer. The `cb` signature is `function(err, buffer)`. The `cb` is called after all the data is received just prior to the `end` event being emitted.
+ - `accum.buffer(listenerFn)` - constructs a pass-through stream which converts everything into a Buffer, concatenates, and calls the `listenerFn` with the buffer. The `listenerFn` signature is `function(buffer)`. The `listenerFn` is called after all the data is received just prior to the `end` event being emitted.
 
 ```javascript
 var accum = require('accum');
 rstream
-  .pipe(accum.buffer(function (err, buffer) {
-    if (err) return yourHandleErrFn(err); // handle the error
+  .pipe(accum.buffer(function (buffer) {
     // use the accumulated data - buffer which is a Buffer
   }));
 ```
 
- - `accum.string([optEncoding], cb)` - constructs a pass-through stream which concatenates everything into a string. Buffer data is converted to string using the optional encoding `optEncoding` which defaults to 'utf8'. Other data is simply converted using `.toString()`. The `cb` signature is `function(err, string)`. The `cb` is called after all the data is received just prior to the `end` event being emitted.
+ - `accum.string([optEncoding], listenerFn)` - constructs a pass-through stream which concatenates everything into a string. Buffer data is converted to string using the optional encoding `optEncoding` which defaults to 'utf8'. Other data is simply converted using `.toString()`. The `listenerFn` signature is `function(string)`. The `listenerFn` is called after all the data is received just prior to the `end` event being emitted.
 
 ```javascript
 var accum = require('accum');
 rstream
-  .pipe(accum.string('utf8', function (err, string) {
-    if (err) return yourHandleErrFn(err); // handle the error
+  .pipe(accum.string('utf8', function (string) {
     // use the accumulated data - string which is a utf8 string
   }));
 ```
 
- - `accum.array(cb)` - constructs a pass-through stream which concatenates everything into an array without any conversion, which the `cb` receives the accumulated data on end. The `cb` signature is `function(err, arr)`. The `cb` is called after all the data is received just prior to the `end` event being emitted.
+ - `accum.array(listenerFn)` - constructs a pass-through stream which concatenates everything into an array without any conversion, which the `listenerFn` receives the accumulated data on end. The `listenerFn` signature is `function(arr)`. The `listenerFn` is called after all the data is received just prior to the `end` event being emitted.
 
 ```javascript
 var accum = require('accum');
 rstream
-  .pipe(accum.array(function (err, array) {
-    if (err) return yourHandleErrFn(err); // handle the error
+  .pipe(accum.array(function (array) {
     // use the accumulated data - array which is a raw unconverted array of data chunks
   }));
+```
+
+### Error handling
+
+Node.js stream.pipe does not forward errors and neither do many pass-through stream implementations so the recommended way to catch errors is either to attach error handlers at each stream or to use domains.
+
+```javascript
+ var d = domain.create();
+    d.on('error', handleAllErrors);
+    d.run(function() {
+      rstream.pipe(accum(function (alldata) {
+        // use alldata
+      });
+    });
 ```
 
 ## Goals

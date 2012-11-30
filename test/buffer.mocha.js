@@ -3,6 +3,7 @@
 
 var chai = require('chai-stack');
 var crypto = require('crypto');
+var domain = require('domain');
 var accum = require('..'); // require('accum');
 var passStream = require('pass-stream');
 
@@ -10,12 +11,11 @@ var t = chai.assert;
 
 suite('buffer');
 
-test('accum.buffer(cb) with string data, results with concatenated Buffer to cb before end', function (done) {
+test('accum.buffer(listenerFn) with string data, results with concatenated Buffer to listenerFn before end', function (done) {
   var DATA = new Buffer('abcdefghi');
   var stream = passStream();
   stream
-    .pipe(accum.buffer(function (err, alldata) {
-      if (err) return done(err);
+    .pipe(accum.buffer(function (alldata) {
       t.ok(Buffer.isBuffer(alldata));
       t.equal(alldata.length, DATA.length);
       var digest = crypto.createHash('sha1').update(alldata).digest('base64');
@@ -30,12 +30,11 @@ test('accum.buffer(cb) with string data, results with concatenated Buffer to cb 
   });
 });
 
-test('accum.buffer(cb) with Buffer data, results with concatenated Buffer to cb before end', function (done) {
+test('accum.buffer(listenerFn) with Buffer data, results with concatenated Buffer to listenerFn before end', function (done) {
   var DATA = new Buffer('abcdefghi');
   var stream = passStream();
   stream
-    .pipe(accum.buffer(function (err, alldata) {
-      if (err) return done(err);
+    .pipe(accum.buffer(function (alldata) {
       t.ok(Buffer.isBuffer(alldata));
       t.equal(alldata.length, DATA.length);
       var digest = crypto.createHash('sha1').update(alldata).digest('base64');
@@ -50,37 +49,24 @@ test('accum.buffer(cb) with Buffer data, results with concatenated Buffer to cb 
   });
 });
 
-
-test('accum.buffer(cb) with err, calls cb with err', function (done) {
-  var stream = accum.buffer(function (err, alldata) {
-    t.equal(err.message, 'my error');
-    done();
-  });
-  process.nextTick(function () {
-    stream.emit('error', new Error('my error'));
-  });
+test('accum.buffer(listenerFn) with throws to domain', function (done) {
+  var d = domain.create();
+  d.on('error', function (err) {
+      t.equal(err.message, 'my error');
+      done();
+    })
+    .run(function () {
+      var stream = accum.buffer(function (alldata) { });
+      process.nextTick(function () {
+        stream.emit('error', new Error('my error'));
+      });
+    });
 });
 
-// currently pipe does not forward error but I have put in
-// pull request to fix node.js. Also pause-stream will have
-// to be modified as well.
-// test('accum.buffer(cb) with err piped, calls cb with err', function (done) {
-//   var stream = passStream();
-//   stream
-//     .pipe(accum.buffer(function (err, alldata) {
-//       t.equal(err.message, 'my error');
-//       done();
-//     }));
-//   process.nextTick(function () {
-//     stream.emit('error', new Error('my error'));
-//   });
-// });
-
-
-test('accum.buffer() missing cb throws error', function () {
+test('accum.buffer() missing listenerFn throws error', function () {
   function throwsErr() {
     var stream = accum.buffer();
   }
-  t.throws(throwsErr, /accum requires a cb function/);
+  t.throws(throwsErr, /accum requires a listenerFn function/);
 });
 

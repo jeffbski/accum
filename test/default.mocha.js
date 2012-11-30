@@ -3,6 +3,7 @@
 
 var chai = require('chai-stack');
 var crypto = require('crypto');
+var domain = require('domain');
 var accum = require('..'); // require('accum');
 var passStream = require('pass-stream');
 
@@ -10,11 +11,10 @@ var t = chai.assert;
 
 suite('default-auto');
 
-test('accum(cb) with string data, results with concatenated string to cb before end', function (done) {
+test('accum(listenerFn) with string data, results with concatenated string to listenerFn before end', function (done) {
   var stream = passStream();
   stream
-    .pipe(accum(function (err, alldata) {
-      if (err) return done(err);
+    .pipe(accum(function (alldata) {
       t.equal(alldata, 'abcdefghi');
       done();
     }));
@@ -25,12 +25,11 @@ test('accum(cb) with string data, results with concatenated string to cb before 
   });
 });
 
-test('accum(cb) with Buffer data, results with concatenated Buffer to cb before end', function (done) {
+test('accum(listenerFn) with Buffer data, results with concatenated Buffer to listenerFn before end', function (done) {
   var DATA = new Buffer('abcdefghi');
   var stream = passStream();
   stream
-    .pipe(accum(function (err, alldata) {
-      if (err) return done(err);
+    .pipe(accum(function (alldata) {
       t.ok(Buffer.isBuffer(alldata));
       t.equal(alldata.length, DATA.length);
       var digest = crypto.createHash('sha1').update(alldata).digest('base64');
@@ -45,11 +44,10 @@ test('accum(cb) with Buffer data, results with concatenated Buffer to cb before 
   });
 });
 
-test('accum(cb) with number data, results with concatenated raw array to cb before end', function (done) {
+test('accum(listenerFn) with number data, results with concatenated raw array to listenerFn before end', function (done) {
   var stream = passStream();
   stream
-    .pipe(accum(function (err, alldata) {
-      if (err) return done(err);
+    .pipe(accum(function (alldata) {
       t.ok(Array.isArray(alldata));
       t.deepEqual(alldata, [1, 2, 3]);
       done();
@@ -61,7 +59,7 @@ test('accum(cb) with number data, results with concatenated raw array to cb befo
   });
 });
 
-test('accum(cb) with various types of data, results with concatenated raw array to cb before end', function (done) {
+test('accum(listenerFn) with various types of data, results with concatenated raw array to listenerFn before end', function (done) {
   var DATA = [
     1,
     true,
@@ -76,8 +74,7 @@ test('accum(cb) with various types of data, results with concatenated raw array 
   ];
   var stream = passStream();
   stream
-    .pipe(accum(function (err, alldata) {
-      if (err) return done(err);
+    .pipe(accum(function (alldata) {
       t.ok(Array.isArray(alldata));
       t.deepEqual(alldata, DATA);
       done();
@@ -91,36 +88,25 @@ test('accum(cb) with various types of data, results with concatenated raw array 
 });
 
 
-test('accum(cb) with err, calls cb with err', function (done) {
-  var stream = accum(function (err, alldata) {
-    t.equal(err.message, 'my error');
-    done();
-  });
-  process.nextTick(function () {
-    stream.emit('error', new Error('my error'));
-  });
+test('accum(listenerFn) with throws to domain', function (done) {
+  var d = domain.create();
+  d.on('error', function (err) {
+      t.equal(err.message, 'my error');
+      done();
+    })
+    .run(function () {
+      var stream = accum(function (alldata) { });
+      process.nextTick(function () {
+        stream.emit('error', new Error('my error'));
+      });
+    });
 });
 
-// currently pipe does not forward error but I have put in
-// pull request to fix node.js. Also pause-stream will have
-// to be modified as well.
-// test('accum(cb) with err piped, calls cb with err', function (done) {
-//   var stream = passStream();
-//   stream
-//     .pipe(accum(function (err, alldata) {
-//       t.equal(err.message, 'my error');
-//       done();
-//     }));
-//   process.nextTick(function () {
-//     stream.emit('error', new Error('my error'));
-//   });
-// });
 
-
-test('missing cb throws error', function () {
+test('missing listenerFn throws error', function () {
   function throwsErr() {
     var stream = accum();
   }
-  t.throws(throwsErr, /accum requires a cb function/);
+  t.throws(throwsErr, /accum requires a listenerFn function/);
 });
 

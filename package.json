@@ -1,7 +1,7 @@
 {
   "name": "accum",
   "description": "accum - Simple pass-through stream (RW) which accumulates or collects the data from a stream. Pipe your stream into this to get all the data as buffer, string, or raw array.",
-  "version": "0.0.6",
+  "version": "0.1.0",
   "author": "Jeff Barczewski <jeff.barczewski@gmail.com>",
   "repository": { "type": "git", "url": "http://github.com/jeffbski/accum.git" },
   "bugs" : { "url": "http://github.com/jeffbski/accum/issues" },
