@@ -41,7 +41,7 @@ test('accum.array(listenerFn) with Buffer data, results with raw array of chunks
 });
 
 test('accum.array(listenerFn) with number data, results raw array to listenerFn before end', function (done) {
-  var stream = passStream();
+  var stream = passStream(null, null, { objectMode: true });
   stream
     .pipe(accum.array(function (alldata) {
       t.ok(Array.isArray(alldata));
@@ -61,14 +61,12 @@ test('accum.array(listenerFn) with various types of data, results with concatena
     true,
     false,
     'hello',
-    null,
-    undefined,
     [2, 3],
     { a: 1, b: 2 },
     new Buffer('buff'),
     'finished'
   ];
-  var stream = passStream();
+  var stream = passStream(null, null, { objectMode: true });
   stream
     .pipe(accum.array(function (alldata) {
       t.ok(Array.isArray(alldata));

@@ -1,6 +1,6 @@
 # accum
 
-Simple pass-through stream (RW) which accumulates or collects the data from a stream. Pipe your stream into this to get all the data as buffer, string, or raw array.
+Simple write stream which accumulates or collects the data from a stream. Pipe your stream into this to get all the data as buffer, string, or raw array.
 
 [![Build Status](https://secure.travis-ci.org/jeffbski/accum.png?branch=master)](http://travis-ci.org/jeffbski/accum)
 
@@ -15,7 +15,7 @@ npm install accum
 
 `accum` provides several factory methods for use:
 
- - The default automatic method - `accum(listenerFn)` constructs a pass-through stream which checks if the first chunk is a Buffer and if so returns a concatenated Buffer of all the data, otherwise if it is a string then returns a concatenated string, otherwise returns a raw array. The `listenerFn` signature is `function(alldata)`. The `listenerFn` is called after all the data is received just prior to the `end` event being emitted.
+ - The default automatic method - `accum(listenerFn)` constructs a write stream which checks if the first chunk is a Buffer and if so returns a concatenated Buffer of all the data, otherwise if it is a string then returns a concatenated string, otherwise returns a raw array. The `listenerFn` signature is `function(alldata)`. The `listenerFn` is called after all the data is received just prior to the `end` event being emitted.
 
 ```javascript
 var accum = require('accum');
@@ -27,7 +27,7 @@ rstream
 
 For a more deterministic result use one of the following:
 
- - `accum.buffer(listenerFn)` - constructs a pass-through stream which converts everything into a Buffer, concatenates, and calls the `listenerFn` with the buffer. The `listenerFn` signature is `function(buffer)`. The `listenerFn` is called after all the data is received just prior to the `end` event being emitted.
+ - `accum.buffer(listenerFn)` - constructs a write stream which converts everything into a Buffer, concatenates, and calls the `listenerFn` with the buffer. The `listenerFn` signature is `function(buffer)`. The `listenerFn` is called after all the data is received just prior to the `end` event being emitted.
 
 ```javascript
 var accum = require('accum');
@@ -37,7 +37,7 @@ rstream
   }));
 ```
 
- - `accum.string([optEncoding], listenerFn)` - constructs a pass-through stream which concatenates everything into a string. Buffer data is converted to string using the optional encoding `optEncoding` which defaults to 'utf8'. Other data is simply converted using `.toString()`. The `listenerFn` signature is `function(string)`. The `listenerFn` is called after all the data is received just prior to the `end` event being emitted.
+ - `accum.string([optEncoding], listenerFn)` - constructs a write stream which concatenates everything into a string. Buffer data is converted to string using the optional encoding `optEncoding` which defaults to 'utf8'. Other data is simply converted using `.toString()`. The `listenerFn` signature is `function(string)`. The `listenerFn` is called after all the data is received just prior to the `end` event being emitted.
 
 ```javascript
 var accum = require('accum');
@@ -47,7 +47,7 @@ rstream
   }));
 ```
 
- - `accum.array(listenerFn)` - constructs a pass-through stream which concatenates everything into an array without any conversion, which the `listenerFn` receives the accumulated data on end. The `listenerFn` signature is `function(arr)`. The `listenerFn` is called after all the data is received just prior to the `end` event being emitted.
+ - `accum.array(listenerFn)` - constructs a write stream which concatenates everything into an array without any conversion, which the `listenerFn` receives the accumulated data on end. The `listenerFn` signature is `function(arr)`. The `listenerFn` is called after all the data is received just prior to the `end` event being emitted.
 
 ```javascript
 var accum = require('accum');
@@ -73,8 +73,8 @@ Node.js stream.pipe does not forward errors and neither do many pass-through str
 
 ## Goals
 
- - Easy to use pass-through stream which accumulates the data from a stream
- - Builds on pass-stream to have all the normal pass-through functionality for a spec compliant stream
+ - Easy to use write stream which accumulates the data from a stream
+ - uses streams2 functionality from node 0.10+ but is backwards compatible with node 0.8
  - Ability to automatically adapt to type of first data packet or coerce the data to a particular format
  - Ability to receive just the raw array of data chunks
  - Tested with binary data
