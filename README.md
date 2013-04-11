@@ -15,7 +15,7 @@ npm install accum
 
 `accum` provides several factory methods for use:
 
- - The default automatic method - `accum(listenerFn)` constructs a write stream which checks if the first chunk is a Buffer and if so returns a concatenated Buffer of all the data, otherwise if it is a string then returns a concatenated string, otherwise returns a raw array. The `listenerFn` signature is `function(alldata)`. The `listenerFn` is called after all the data is received just prior to the `end` event being emitted.
+ - The default automatic method - `accum([options], listenerFn)` constructs a write stream which checks if the first chunk is a Buffer and if so returns a concatenated Buffer of all the data, otherwise if it is a string then returns a concatenated string, otherwise returns a raw array. The `listenerFn` signature is `function(alldata)`. The `listenerFn` is called after all the data is received just prior to the `end` event being emitted. The `options` parameter can be omitted.
 
 ```javascript
 var accum = require('accum');
@@ -27,7 +27,7 @@ rstream
 
 For a more deterministic result use one of the following:
 
- - `accum.buffer(listenerFn)` - constructs a write stream which converts everything into a Buffer, concatenates, and calls the `listenerFn` with the buffer. The `listenerFn` signature is `function(buffer)`. The `listenerFn` is called after all the data is received just prior to the `end` event being emitted.
+ - `accum.buffer([options], listenerFn)` - constructs a write stream which converts everything into a Buffer, concatenates, and calls the `listenerFn` with the buffer. The `listenerFn` signature is `function(buffer)`. The `listenerFn` is called after all the data is received just prior to the `end` event being emitted. The `options` parameter can be omitted.
 
 ```javascript
 var accum = require('accum');
@@ -37,17 +37,17 @@ rstream
   }));
 ```
 
- - `accum.string([optEncoding], listenerFn)` - constructs a write stream which concatenates everything into a string. Buffer data is converted to string using the optional encoding `optEncoding` which defaults to 'utf8'. Other data is simply converted using `.toString()`. The `listenerFn` signature is `function(string)`. The `listenerFn` is called after all the data is received just prior to the `end` event being emitted.
+ - `accum.string([options], listenerFn)` - constructs a write stream which concatenates everything into a string. Buffer data is converted to string using the optional `encoding` which defaults to 'utf8'. Other data is simply converted using `.toString()`. The `listenerFn` signature is `function(string)`. The `listenerFn` is called after all the data is received just prior to the `end` event being emitted. The `options` parameter can be omitted.
 
 ```javascript
 var accum = require('accum');
 rstream
-  .pipe(accum.string('utf8', function (string) {
+  .pipe(accum.string({ encoding: 'utf8'}, function (string) {
     // use the accumulated data - string which is a utf8 string
   }));
 ```
 
- - `accum.array(listenerFn)` - constructs a write stream which concatenates everything into an array without any conversion, which the `listenerFn` receives the accumulated data on end. The `listenerFn` signature is `function(arr)`. The `listenerFn` is called after all the data is received just prior to the `end` event being emitted.
+ - `accum.array([options], listenerFn)` - constructs a write stream which concatenates everything into an array without any conversion, which the `listenerFn` receives the accumulated data on end. The `listenerFn` signature is `function(arr)`. The `listenerFn` is called after all the data is received just prior to the `end` event being emitted. The `options` parameter can be omitted.
 
 ```javascript
 var accum = require('accum');
@@ -87,6 +87,12 @@ There were several existing projects that also accumululate in slightly differen
 
  - https://github.com/polotek/data-collector-stream
  - https://github.com/Weltschmerz/Accumulate
+
+## Tested with Node versions
+
+ - 0.8
+ - 0.10
+ - 0.11
 
 ## Get involved
 

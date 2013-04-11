@@ -11,10 +11,10 @@ var t = chai.assert;
 
 suite('array');
 
-test('accum.array(listenerFn) with string data, results with raw array of chunks to listenerFn before end', function (done) {
-  var stream = passStream();
+test('accum.array(listenerFn) with string data, results with raw array of chunks to listenerFn', function (done) {
+  var stream = passStream(null, null, { encoding: 'utf8' });
   stream
-    .pipe(accum.array(function (alldata) {
+    .pipe(accum.array({ decodeStrings: false }, function (alldata) {
       t.deepEqual(alldata, ['abc', 'def', 'ghi']);
       done();
     }));
@@ -25,8 +25,7 @@ test('accum.array(listenerFn) with string data, results with raw array of chunks
   });
 });
 
-test('accum.array(listenerFn) with Buffer data, results with raw array of chunks to listenerFn before end', function (done) {
-  var DATA = new Buffer('abcdefghi');
+test('accum.array(listenerFn) with Buffer data, results with raw array of chunks to listenerFn', function (done) {
   var stream = passStream();
   stream
     .pipe(accum.array(function (alldata) {
@@ -40,10 +39,10 @@ test('accum.array(listenerFn) with Buffer data, results with raw array of chunks
   });
 });
 
-test('accum.array(listenerFn) with number data, results raw array to listenerFn before end', function (done) {
+test('accum.array(listenerFn) with number data, results raw array to listenerFn', function (done) {
   var stream = passStream(null, null, { objectMode: true });
   stream
-    .pipe(accum.array(function (alldata) {
+    .pipe(accum.array({ objectMode: true }, function (alldata) {
       t.ok(Array.isArray(alldata));
       t.deepEqual(alldata, [1, 2, 3]);
       done();
@@ -55,7 +54,7 @@ test('accum.array(listenerFn) with number data, results raw array to listenerFn 
   });
 });
 
-test('accum.array(listenerFn) with various types of data, results with concatenated raw array to listenerFn before end', function (done) {
+test('accum.array(listenerFn) w/various data, results with concatenated raw array to listenerFn', function (done) {
   var DATA = [
     1,
     true,
@@ -68,7 +67,7 @@ test('accum.array(listenerFn) with various types of data, results with concatena
   ];
   var stream = passStream(null, null, { objectMode: true });
   stream
-    .pipe(accum.array(function (alldata) {
+    .pipe(accum.array({objectMode: true }, function (alldata) {
       t.ok(Array.isArray(alldata));
       t.deepEqual(alldata, DATA);
       done();

@@ -45,9 +45,9 @@ test('accum(listenerFn) with Buffer data, results with concatenated Buffer to li
 });
 
 test('accum(listenerFn) with number data, results with concatenated raw array to listenerFn before end', function (done) {
-  var stream = passStream();
+  var stream = passStream(null, null, { objectMode: true });
   stream
-    .pipe(accum(function (alldata) {
+    .pipe(accum({ objectMode: true }, function (alldata) {
       t.ok(Array.isArray(alldata));
       t.deepEqual(alldata, [1, 2, 3]);
       done();
@@ -65,16 +65,14 @@ test('accum(listenerFn) with various types of data, results with concatenated ra
     true,
     false,
     'hello',
-    null,
-    undefined,
     [2, 3],
     { a: 1, b: 2 },
     new Buffer('buff'),
     'finished'
   ];
-  var stream = passStream();
+  var stream = passStream(null, null, { objectMode: true });
   stream
-    .pipe(accum(function (alldata) {
+    .pipe(accum({ objectMode: true }, function (alldata) {
       t.ok(Array.isArray(alldata));
       t.deepEqual(alldata, DATA);
       done();

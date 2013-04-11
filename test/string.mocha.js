@@ -49,7 +49,7 @@ test('accum.string("utf8", listenerFn) with Buffer data, results with concatenat
   var DATA = 'abcdefghi';
   var stream = passStream();
   stream
-    .pipe(accum.string('utf8', function (alldata) {
+    .pipe(accum.string({ encoding: 'utf8' }, function (alldata) {
       t.typeOf(alldata, 'string');
       t.equal(alldata.length, DATA.length);
       t.equal(alldata, DATA);
