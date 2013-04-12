@@ -1,6 +1,6 @@
 # accum
 
-Simple write stream which accumulates or collects the data from a stream. Pipe your stream into this to get all the data as buffer, string, or raw array.
+Simple write stream which accumulates or collects the data from a stream. Pipe your stream into this to get all the data as buffer, string, or raw array. (streams2)
 
 [![Build Status](https://secure.travis-ci.org/jeffbski/accum.png?branch=master)](http://travis-ci.org/jeffbski/accum)
 
