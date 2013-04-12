@@ -1,7 +1,7 @@
 {
   "name": "accum",
   "description": "accum - Simple write stream which accumulates or collects the data from a stream. Pipe your stream into this to get all the data as buffer, string, or raw array.",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "author": "Jeff Barczewski <jeff.barczewski@gmail.com>",
   "repository": { "type": "git", "url": "http://github.com/jeffbski/accum.git" },
   "bugs" : { "url": "http://github.com/jeffbski/accum/issues" },
@@ -9,7 +9,7 @@
   "main": "lib/accum",
   "engines": { "node": ">=0.8" },
   "dependencies": {
-    "readable-stream": "https://github.com/jeffbski/readable-stream/tarball/v1.0.2-object-transform"
+    "readable-stream": "~1.0.2"
   },
   "devDependencies": {
     "mocha": "~1.9.0",
