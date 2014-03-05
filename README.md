@@ -78,6 +78,7 @@ Node.js stream.pipe does not forward errors and neither do many pass-through str
  - Ability to automatically adapt to type of first data packet or coerce the data to a particular format
  - Ability to receive just the raw array of data chunks
  - Tested with binary data
+ - Handle multibyte utf8 data which may have gotten split across packets in a stream
 
 ## Why
 
