@@ -62,6 +62,28 @@ test('accum.string("utf8", listenerFn) with Buffer data, results with concatenat
   });
 });
 
+test('accum.string("utf8", listenerFn) with Buffer data having multibyte utf8 split into separate packets, Buffer.concat before convert', function (done) {
+  // http://en.wikipedia.org/wiki/UTF-8 \u20ac is € euro sign
+  var DATA = '\u20ac'; // multibyte
+  var stream = passStream();
+  stream
+    .pipe(accum.string({ encoding: 'utf8' }, function (alldata) {
+      t.typeOf(alldata, 'string');
+      t.equal(alldata.length, DATA.length);
+      t.equal(alldata, DATA);
+      done();
+    }));
+  process.nextTick(function () {
+    var fullBuffer = new Buffer('\u20ac', 'utf8');
+    t.ok(fullBuffer.length > 1);
+    // make buffer packets split the multibyte string
+    var firstPacket = fullBuffer.slice(0, 1);
+    var secondPacket = fullBuffer.slice(1);
+    stream.write(firstPacket);
+    stream.end(secondPacket);
+  });
+});
+
 test('accum.string(listenerFn) with throws to domain', function (done) {
   var d = domain.create();
   d.on('error', function (err) {
