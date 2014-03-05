@@ -1,13 +1,25 @@
 {
   "name": "accum",
   "description": "accum - Simple write stream which accumulates or collects the data from a stream. Pipe your stream into this to get all the data as buffer, string, or raw array. (streams2)",
-  "version": "0.3.5",
+  "version": "0.3.6",
   "author": "Jeff Barczewski <jeff.barczewski@gmail.com>",
-  "repository": { "type": "git", "url": "http://github.com/jeffbski/accum.git" },
-  "bugs" : { "url": "http://github.com/jeffbski/accum/issues" },
-  "licenses": [{ "type": "MIT", "url" : "http://github.com/jeffbski/accum/raw/master/LICENSE" }],
+  "repository": {
+    "type": "git",
+    "url": "http://github.com/jeffbski/accum.git"
+  },
+  "bugs": {
+    "url": "http://github.com/jeffbski/accum/issues"
+  },
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "http://github.com/jeffbski/accum/raw/master/LICENSE"
+    }
+  ],
   "main": "lib/accum",
-  "engines": { "node": ">=0.8" },
+  "engines": {
+    "node": ">=0.8"
+  },
   "dependencies": {
     "readable-stream": "https://github.com/jeffbski/readable-stream/archive/v1.0.2-object-transform2-ret-self.tar.gz"
   },
