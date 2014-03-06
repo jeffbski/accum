@@ -84,8 +84,9 @@ Node.js stream.pipe does not forward errors and neither do many pass-through str
 
 Rather than manually accumulating streams, put all the best practices into this one module. There are subtle errors that can occur if utf8 strings happen to be split in the middle of a character, so conversion and concatenation needs to be done properly.
 
-There were several existing projects that also accumululate in slightly different ways:
+Other projects that also accumululate in slightly different ways:
 
+ - https://github.com/maxogden/concat-stream
  - https://github.com/polotek/data-collector-stream
  - https://github.com/Weltschmerz/Accumulate
 
