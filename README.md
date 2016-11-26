@@ -15,7 +15,7 @@ npm install accum
 
 `accum` provides several factory methods for use:
 
- - The default automatic method - `accum([options], listenerFn)` constructs a write stream which checks if the first chunk is a Buffer and if so returns a concatenated Buffer of all the data, otherwise if it is a string then returns a concatenated string, otherwise returns a raw array. The `listenerFn` signature is `function(alldata)`. The `listenerFn` is called after all the data is received just prior to the `end` event being emitted. The `options` parameter can be omitted.
+ - The default automatic method - `accum([options], listenerFn)` constructs a write stream which checks if the first chunk is a Buffer and if so returns a concatenated Buffer of all the data, otherwise if it is a string then returns a concatenated string, otherwise returns a raw array. The `listenerFn` signature is `function(alldata)`. The `listenerFn` is called after all the data is received just prior to the `end` event being emitted. The `options` parameter is passed to the underlying writable stream constructor (see [Node.js stream docs](https://nodejs.org/dist/latest-v7.x/docs/api/stream.html#stream_constructor_new_stream_writable_options). The `options` parameter can be omitted.
 
 ```javascript
 var accum = require('accum');
@@ -27,7 +27,7 @@ rstream
 
 For a more deterministic result use one of the following:
 
- - `accum.buffer([options], listenerFn)` - constructs a write stream which converts everything into a Buffer, concatenates, and calls the `listenerFn` with the buffer. The `listenerFn` signature is `function(buffer)`. The `listenerFn` is called after all the data is received just prior to the `end` event being emitted. The `options` parameter can be omitted.
+ - `accum.buffer([options], listenerFn)` - constructs a write stream which converts everything into a Buffer, concatenates, and calls the `listenerFn` with the buffer. The `listenerFn` signature is `function(buffer)`. The `listenerFn` is called after all the data is received just prior to the `end` event being emitted. The `options` parameter is passed to the underlying writable stream constructor (see [Node.js stream docs](https://nodejs.org/dist/latest-v7.x/docs/api/stream.html#stream_constructor_new_stream_writable_options). The `options` parameter can be omitted.
 
 ```javascript
 var accum = require('accum');
@@ -37,7 +37,7 @@ rstream
   }));
 ```
 
- - `accum.string([options], listenerFn)` - constructs a write stream which concatenates everything into a string. Buffer data is converted to string using the optional `encoding` which defaults to 'utf8'. Other data is simply converted using `.toString()`. The `listenerFn` signature is `function(string)`. The `listenerFn` is called after all the data is received just prior to the `end` event being emitted. The `options` parameter can be omitted.
+ - `accum.string([options], listenerFn)` - constructs a write stream which concatenates everything into a string. Buffer data is converted to string using the optional `encoding` which defaults to 'utf8'. Other data is simply converted using `.toString()`. The `listenerFn` signature is `function(string)`. The `listenerFn` is called after all the data is received just prior to the `end` event being emitted. The `options` parameter is passed to the underlying writable stream constructor (see [Node.js stream docs](https://nodejs.org/dist/latest-v7.x/docs/api/stream.html#stream_constructor_new_stream_writable_options). The `options` parameter can be omitted.
 
 ```javascript
 var accum = require('accum');
@@ -47,7 +47,7 @@ rstream
   }));
 ```
 
- - `accum.array([options], listenerFn)` - constructs a write stream which concatenates everything into an array without any conversion, which the `listenerFn` receives the accumulated data on end. The `listenerFn` signature is `function(arr)`. The `listenerFn` is called after all the data is received just prior to the `end` event being emitted. The `options` parameter can be omitted.
+ - `accum.array([options], listenerFn)` - constructs a write stream which concatenates everything into an array without any conversion, which the `listenerFn` receives the accumulated data on end. The `listenerFn` signature is `function(arr)`. The `listenerFn` is called after all the data is received just prior to the `end` event being emitted. The `options` parameter is passed to the underlying writable stream constructor (see [Node.js stream docs](https://nodejs.org/dist/latest-v7.x/docs/api/stream.html#stream_constructor_new_stream_writable_options). The `options` parameter can be omitted.
 
 ```javascript
 var accum = require('accum');
@@ -56,6 +56,17 @@ rstream
     // use the accumulated data - array which is a raw unconverted array of data chunks
   }));
 ```
+
+If you are intending to use an object stream, then you will want to set the `options` to `{objectMode: true}`
+
+```javascript
+var accum = require('accum');
+rstream
+  .pipe(accum.array({ objectMode: true }, function (array) {
+    // use the accumulated data - array of objects
+  }));
+```
+
 
 ### Error handling
 
@@ -95,6 +106,10 @@ Other projects that also accumululate in slightly different ways:
  - 0.8
  - 0.10
  - 0.11
+ - 0.12
+ - 4.x
+ - 6.x
+ - 7.x
 
 ## Get involved
 
@@ -107,4 +122,3 @@ If you have input or ideas or would like to get involved, you may:
 ## License
 
  - [MIT license](http://github.com/jeffbski/accum/raw/master/LICENSE)
-
