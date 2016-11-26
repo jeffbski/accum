@@ -1,7 +1,7 @@
 {
   "name": "accum",
   "description": "accum - Simple write stream which accumulates or collects the data from a stream. Pipe your stream into this to get all the data as buffer, string, or raw array. (streams2)",
-  "version": "0.3.6",
+  "version": "0.3.7",
   "author": "Jeff Barczewski <jeff.barczewski@gmail.com>",
   "repository": {
     "type": "git",
